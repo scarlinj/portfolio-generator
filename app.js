@@ -1,21 +1,26 @@
 const inquirer = require('inquirer');
 const promptUser = () => {
     return inquirer.prompt([{
-            type: 'input',
-            name: 'name',
-            message: 'What is your name?'
-        },
-        {
-            type: 'input',
-            name: 'github',
-            message: 'Enter your GitHub Username'
-        },
-        {
-            type: 'input',
-            name: 'about',
-            message: 'Provide some information about yourself:'
+        type: 'input',
+        name: 'name',
+        message: 'What is your name? (Required)',
+        validate: nameInput => {
+            if (nameInput) {
+                return true;
+            } else {
+                console.log('Please enter your name.');
+                return false;
+            }
         }
-    ]);
+    }, {
+        type: 'input',
+        name: 'Github username',
+        message: 'Enter your GitHub Username'
+    }, {
+        type: 'input',
+        name: 'about',
+        message: 'Provide some information about yourself:'
+    }]);
 };
 
 
@@ -39,12 +44,12 @@ const promptProject = portfolioData => {
         })
         ([{
                 type: 'input',
-                name: 'name',
+                name: 'Project name',
                 message: 'What is the name of your project?'
             },
             {
                 type: 'input',
-                name: 'description',
+                name: 'Project description',
                 message: 'Provide a description of the project (Required)'
             },
             {
@@ -55,7 +60,7 @@ const promptProject = portfolioData => {
             },
             {
                 type: 'input',
-                name: 'link',
+                name: 'Project Github link',
                 message: 'Enter the GitHub link to your project. (Required)'
             },
             {
