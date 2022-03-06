@@ -1,4 +1,8 @@
+const fs = require('fs');
+
+const generatePage = require('./src/page-template.js');
 const inquirer = require('inquirer');
+
 const promptUser = () => {
     return inquirer.prompt([{
         type: 'input',
@@ -14,7 +18,7 @@ const promptUser = () => {
         }
     }, {
         type: 'input',
-        name: 'Github username',
+        name: 'Github',
         message: 'Enter your GitHub Username'
     }, {
         type: 'confirm',
@@ -48,15 +52,8 @@ const promptProject = portfolioData => {
     if (!portfolioData.projects) {
         portfolioData.projects = [];
     }
-    return inquirer.prompt.then(projectData => {
-            portfolioData.projects.push(projectData);
-            if (projectData.confirmAddProject) {
-                return promptProject(portfolioData);
-            } else {
-                return portfolioData;
-            }
-        })
-        ([{
+    return inquirer
+        .prompt([{
                 type: 'input',
                 name: 'Project name',
                 message: 'What is the name of your project?'
@@ -89,18 +86,31 @@ const promptProject = portfolioData => {
                 message: 'Would you like to enter another project?',
                 default: false
             }
-        ]);
+        ])
+        .then(projectData => {
+            portfolioData.projects.push(projectData);
+            if (projectData.confirmAddProject) {
+                return promptProject(portfolioData);
+            } else {
+                return portfolioData;
+            }
+        });
 };
 
 promptUser()
-    .then(answers => console.log(answers))
+    // .then(answers => console.log(answers))
     .then(promptProject)
-    .then(projectAnswers => console.log(projectAnswers));
+    .then(portfolioData => {
+        const pageHTML = generatePage(portfolioData);
 
+        fs.writeFile('./index.html', pageHTML, err => {
+            if (err) throw new Error(err);
 
-// const fs = require('fs');
+            console.log('Page created! Check out index.html in this directory to see it!');
+        });
+    });
 
-// const generatePage = require('./src/page-template.js');
+// .then(projectAnswers => console.log(projectAnswers));
 
 // const pageHTML = generatePage(name, github);
 
